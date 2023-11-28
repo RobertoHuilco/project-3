@@ -4,6 +4,7 @@ import { UpdateBookDto } from './dto/update-book.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Book } from './entities/book.entity';
 import { Repository } from 'typeorm';
+import { Pagination } from './dto/bookpagination';
 
 @Injectable()
 export class BookService {
@@ -17,8 +18,13 @@ export class BookService {
     return book;
   }
   //
-  async findAll() {
-    return await this.bookRepository.find();
+  async findAll(paginacionDto:Pagination) {
+    const{limit=10, offset=1}=paginacionDto;
+  
+    return await this.bookRepository.find({
+      take:limit,
+      skip:offset
+    });
   }
   //
   async findOne(id: number) {
@@ -28,11 +34,26 @@ export class BookService {
     return book;
   }
 
-  update(id: number, updateBookDto: UpdateBookDto) {
-    return `This action updates a #${id} book`;
+  async update(id: number, updateBookDto: UpdateBookDto) {
+    const book = await this.bookRepository.findOne({
+      where: { id }
+    });
+    if (!book) {
+      throw new Error(`Book with id ${id} not found`);
+    }
+    Object.assign(book, updateBookDto);
+    await this.bookRepository.save(book);
+    return book;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} book`;
+  async remove(id: number) {
+    const book = await this.bookRepository.findOne({
+      where: { id }
+    });
+    if (!book) {
+      throw new Error(`Book with id ${id} not found`);
+    }
+    await this.bookRepository.remove(book);
+    return book;
   }
 }
