@@ -2,14 +2,14 @@ import { Injectable, Body } from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Book } from './entities/book.entity';
+import { BookEntity } from './entities/book.entity';
 import { Repository } from 'typeorm';
 import { Pagination } from './dto/bookpagination';
 
 @Injectable()
 export class BookService {
 
-  constructor(@InjectRepository(Book) private readonly bookRepository: Repository<Book>,
+  constructor(@InjectRepository(BookEntity) private readonly bookRepository: Repository<BookEntity>,
   ) { }
   //
   async create(createBookDto: CreateBookDto) {
